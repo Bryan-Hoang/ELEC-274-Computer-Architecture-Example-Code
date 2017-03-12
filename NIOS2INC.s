@@ -1,3 +1,6 @@
+# NIOS2INC.S
+# Macros supplied with Altera development software
+
 .ifndef _nios2_macros_
 .equ _nios2_macros_,1
 

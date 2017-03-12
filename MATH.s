@@ -1,5 +1,19 @@
 # MATH.S [170205]
-# 
+
+##### DISCLAIMER ###############################################################
+# This code has been provided by David Athersych primarily to support students
+# in QECE ELEC274. The receiver of this code may use it without charge, subject
+# to the following conditions: (a) the receiver acknowledges that this code has
+# been received without warranty or guarantee of any kind; (b) the receiver
+# acknowledges that the receiver shall make the determination whether this code
+# is suitable for the receiver's needs; and (c) the receiver agrees that all
+# responsibility for loss or damage due to the use of the code lies with the
+# receiver. Professional courtesy would suggest that the receiver report any
+# errors found, and that the receiver acknowledge the source of the code. See
+# more information at www.cynosurecomputer.ca or
+#     https://gitlab.com/david.athersych/ELEC274Code.git
+################################################################################
+
 ###############################################################################
 # MATH - some useful math routines - multiply and divide by 10
 #
@@ -7,8 +21,49 @@
 # David Athersych, P.Eng. Cynosure Computer Technologies Inc.
 #
 # HISTORY:
-# 170205 DFA	First release
+# 170205 DFA	First release - experimental
 ###############################################################################
+
+	.include	MACROS.S
+
+#	.equ	TESTCODE, 1					# define to include test code
+	.ifdef TESTCODE
+
+## START MAIN ##
+# Symbol definitions
+	.equ	LAST_RAM_WORD,	0x007FFFFC
+	.equ	JTAG_UART_BASE,	0x10001000	# base address of JTAG UART
+	.equ	OFFSET_DATA,	0			# offset from base for data register
+	.equ	OFFSET_STATUS,	4			# offset from base for status register
+	.equ	WSPACE_MASK,	0xFFFF		# 16 bit mask used to get status bits
+
+# Object module configuration.
+	.text				# tell assembler that this is code segment
+	.global	_start		# tell assembler that _start is visible to linker
+
+	.org	0x00000400	# starting address for the following code
+
+_start:
+	# Initialize stack pointer to point to last word in memory. Stack is
+	# used by hardware to store return address during function call. Stack
+	# may also be used for temporary variables.
+	movia	sp, LAST_RAM_WORD
+	
+	# Test multiply
+	movi r2, 25
+	call mul10
+	# CONFIRMED THAT R1 contained 0XFA which is 250 in decimal
+	
+	# Test Divide
+	movi r2, 624
+	call div10
+
+	
+	
+_end:
+	br		_end		# nothing else to do and nowhere else to go.
+
+	.endif
 
 
 #==============================================================================
@@ -60,6 +115,7 @@ Tens:		.word	10, 100, 1000
 digits:		.byte	0, 0, 0, 0
 quotient:	.word	0
 
+
 div10:
 	# save registers that we use for our work (r2, r5, r6, r8, r9)
 	PUSH	r2					# need MACROs
@@ -69,6 +125,8 @@ div10:
 	PUSH	r9
 
 	mov		r7, r0				# initial value of quotient
+	stw		r0, quotient		# make sure nothing left over
+	stw		r0, digits			# make sure nothing left over
 	# r5 will be used to work through all 4 digits
 	movi	r5, 3				# set up one too large
 nextdigit:						# loop through all digits
@@ -96,7 +154,7 @@ dundgt:
 	bge		r0, r5, nextdigit	# count down to 0
 	# OK - done all digits and stored them - set up address to
 	# return
-	movai	r1, digits
+	movia	r1, digits
 	# accumulated a quotient in r7
 	# restore other registers
 	POP		r9

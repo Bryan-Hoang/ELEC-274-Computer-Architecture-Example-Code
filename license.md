@@ -1,7 +1,8 @@
 /* * START LICENSE
-Code developed to work with the NIOS 2 Processor on a DE0 (Basic) computer
-from Altera (Intel).
-Copyright 2016, 2017 by David F. Athersych, Kingston, Ontario, Canada. (THE AUTHOR).
+Code developed to work with NIOS 2 Processor on DE0 (Basic) computer
+system from Altera (Intel).
+Copyright 2016, 2017 by
+David F. Athersych, Kingston, Ontario, Canada. (THE AUTHOR).
 This software may be included in systems delivered or distributed by
 Cynosure Computer Technologies Incorporated, Kingston, Ontario, Canada.
 

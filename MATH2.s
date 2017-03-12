@@ -10,22 +10,7 @@
 # 170205 DFA	First release
 ###############################################################################
 
-
-## MACROS INSERTED WITH CHANGES ##
-.ifndef _macros_s
-.equ _macros_s,1
-
-	.macro	PUSH	reg
-	subi	sp, sp, 4		# reserve space for register
-	stw	\reg, 0(sp)		# store register
-	.endm
-
-	.macro	POP	reg
-	ldw	\reg, 0(sp)		# top item copied to register
-	addi	sp, sp, 4		# discard space
-	.endm
-
-.endif
+	.include	MACROS.S
 
 
 ## START MAIN ##

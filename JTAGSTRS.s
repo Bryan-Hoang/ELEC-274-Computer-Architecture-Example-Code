@@ -1,5 +1,19 @@
 # JTAGSTRS.S [170224]
-# 
+
+##### DISCLAIMER ###############################################################
+# This code has been provided by David Athersych primarily to support students
+# in QECE ELEC274. The receiver of this code may use it without charge, subject
+# to the following conditions: (a) the receiver acknowledges that this code has
+# been received without warranty or guarantee of any kind; (b) the receiver
+# acknowledges that the receiver shall make the determination whether this code
+# is suitable for the receiver's needs; and (c) the receiver agrees that all
+# responsibility for loss or damage due to the use of the code lies with the
+# receiver. Professional courtesy would suggest that the receiver report any
+# errors found, and that the receiver acknowledge the source of the code. See
+# more information at www.cynosurecomputer.ca or
+#     https://gitlab.com/david.athersych/ELEC274Code.git
+################################################################################
+
 ###############################################################################
 # Read strings from and write strings to the JTAG port.
 #
@@ -11,6 +25,7 @@
 ###############################################################################
 
 # Uses PrintChar and GetChar from JTAGPOLL.
+		.include	JTAGPOLL.S
 
 #==============================================================================
 # Subroutine GetString
@@ -37,7 +52,7 @@ gsloop:
 	cmplei	r5, r3, 1			# make sure r3 greater than 1
 	bne		r5, r0, gsdone		# r5 non-zero if r3 <= 1
 	call	GetJTAG				# returns with character in R2
-	cmpeqi	r5, r2, '\r'		# was it CR?
+	cmpeqi	r5, r2, '\n'		# was it NL? (Translated by emulator)
 	bne		r5, r0, gsdone		# r5 non-zero if r2 == CR
 	stb		r2, 0(r4)			# store character read where r4 points
 	addi	r4, r4, 1			# move buffer pointer by 1 character
