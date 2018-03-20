@@ -66,27 +66,6 @@ _goforever:
 _end:
 	br		_end		# nothing else to do and nowhere else to go.
 
-#==============================================================================
-# Subroutine xxxxxxx
-#
-# Parameters:
-#	R2	- contains character to be displayed
-# Return value:
-#	nothing
-
-xxxxxx:
-	# Save registers
-	subi	sp, sp, 8	# subtract 4 from sp, making room for a word.
-	stw		r3, 4(sp)	# save contents of r3
-	stw		r4, 0(sp)	# and r4.
-
-	... YOUR CODE GOES HERE ...
-
-	# our work accomplished; restore register values
-	ldw		r3, 4(sp)
-	ldw		r4, 0(sp)
-	addi	sp, sp, 8	# add 8 to sp, effectively discarding space on stack
-	ret					# go back to calling site, all registers preserved
 
 ###############################################################################
 # PRTCHSTR contains a print character and a print string routine, outputting

@@ -21,9 +21,12 @@
 # Author:
 # David Athersych, P.Eng. Cynosure Computer Technologies Inc.
 #
+# NOTE:
+#	This version uses macros.
+#
 # HISTORY:
 # 170307 DFA	First release. Intended for QECE ELEC274.
-# 180225 DFA	Update (minor)
+# 180225 DFA	Minor update to comments.
 ###############################################################################
 
 	.equ	LED_ADDR	0x10000010	# address of 10 bit LED port
@@ -86,14 +89,7 @@ Error:	.byte	0xC0				# error pattern
 #	R2	- unchanged
 
 Show8Seg:
-	#pshregs	ra, r2, r3, r4, r5, r6
-	subi	sp, sp, 24
-	stw		ra, 0(sp)
-	stw		r2, 4(sp)
-	stw		r3, 8(sp)
-	stw		r4, 12(sp)
-	stw		r5,	16(sp)
-	stw		r6, 20(sp)
+	pshregs	ra, r2, r3, r4, r5, r6
 	sub		r3, r3, r3		# zero r3
 	movi	r5, 0x0F		# 4 bits in bottom of r5 (why?)
 L1:
@@ -101,12 +97,7 @@ L1:
 	ldbu	r6, Table(r4)	# load pattern into r6 (gets 0 extended)
 	or		r3, r3, r6		# OR pattern into bottom byte of r3
 	srli	r2, r2, 4		# shift bottom 4 bits into bit bucket
-	subi	sp, sp, 4
-	stw		r9, 0(sp)
-	movi	r9, 8
-	ror		r3, r3, r9		# rotate r3 register to right 8 bits
-	ldw		r9, 0(sp)
-	addi	sp, sp, 4
+	rori	r3, r3, 8		# rotate r3 register to right 8 bits
 	srli	r5, r5, 1		# shift r5 right by 1 bit
 	bne		r5, r0, L1		# aha! We were using r5 to count the loop!
 	# At this point, r3 has 4 patterns - for each of the 4 displays
@@ -116,14 +107,7 @@ L1:
 	stw		r3, 0(r5)
 	# done
 Restore:
-	#popregs	r6, r5, r4, r3, r2, ra
-	ldw		ra, 0(sp)
-	ldw		r2, 4(sp)
-	ldw		r3, 8(sp)
-	ldw		r4, 12(sp)
-	ldw		r5,	16(sp)
-	ldw		r6, 20(sp)
-	addi	sp, sp, 24
+	popregs	r6, r5, r4, r3, r2, ra
 	ret
 
 #==============================================================================
@@ -135,18 +119,9 @@ Restore:
 #			Bits 4 & 5 contain position to display in 00, 01, 10 11
 # Return value:
 #	R2	-	Unchanged
-# NOTE:
-#	This code has the same epilog as the function above!
 
 One8Seg:
-	#pshregs	ra, r2, r3, r4, r5, r6
-	subi	sp, sp, 24
-	stw		ra, 0(sp)
-	stw		r2, 4(sp)
-	stw		r3, 8(sp)
-	stw		r4, 12(sp)
-	stw		r5,	16(sp)
-	stw		r6, 20(sp)
+	pshregs	ra, r2, r3, r4, r5, r6
 	mov		r6, r2			# save copy
 	andi	r2, r2, 0x0F	# keep only bottom 4 bits
 	ldbu	r2, Table(r2)	# get display pattern for this value

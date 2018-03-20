@@ -24,6 +24,7 @@
 # 170307 DFA	First release. Intended for QECE ELEC274.
 ###############################################################################
 
+	.DATA
 
 	.TEXT
 
@@ -39,9 +40,7 @@
 #			invalid
 
 CHR2BIN:
-	subi	sp, sp, 8
-	stw		ra, 0(sp)
-	stw		r3, 4(sp)
+	pshregs	ea, r3
 	movui	r3, '0'			# check low range
 	bltu	r2, r3, c2berr	# invalid character
 	movui	r3, '9'			# numbers
@@ -53,7 +52,7 @@ CHR2BIN:
 	bleu	r2, r3, subA	# A-F range
 	# get here because character not in range
 c2berr:
-	movi	r2, -1			# becomes 32-bit (-1) value
+	movi	r2, 0xFFFF		# becomes 32-bit (-1) value
 	br		done
 subA:
 	subi	r2, r2, 'A'		# 'A' to 'F' becomes 0 to 5
@@ -62,9 +61,7 @@ subA:
 sub0:
 	subi	r2, r2, '0'		# '0' to '9' becomes 0 to 9
 done:
-	ldw		ra, 0(sp)
-	ldw		r3, 4(sp)
-	addi	sp, sp, 8
+	popregs	r3, ea
 	ret
 
 
@@ -78,16 +75,14 @@ done:
 #	r2	-	character value between '0' and 'F'
 
 BIN2CHR:
-	subi	sp, sp, 8
-	stw		ra, 0(sp)
-	stw		r3, 4(sp)
+	pshregs	ea, r3
 	blt		r2, r0, b2cerr	# too small
 	movi	r3, 9
 	ble		r2, r3, add0	# between 0 and 9
 	movi	r3, 15
 	ble		r2, r3, addA	# between 10 and 15 (0x0A and 0x0F)
 b2cerr:
-	movi	r2, -1			# invalid value to convert
+	movi	r2, 0xFFFF		# invalid value to convert
 	br		done
 addA:
 	subi	r2, r2, 10		# values 10 to 15 becomes 0 to 5

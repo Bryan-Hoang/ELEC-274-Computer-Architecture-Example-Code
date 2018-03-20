@@ -49,7 +49,9 @@ OTHER_EXCEPTIONS:
 	# that will be specified in their description.
 	# First step - confirm valid range.  If r1 is invalid, we change it to 0.
 	# That means there is no system service with index 0.
-	< Code goes here >
+
+	# < Code goes here >
+
 	# After checking valid index, r1 now holds 0 or a valid index
 	shli	r18, r1, 2			# shift over by 2 bits - now a word offset
 	ldw		r18, handler(r18)	# get address from handler table
@@ -66,6 +68,26 @@ handler:	# table of addresses
 INSTFAIL:
 	# Check if reason is failed instruction - take whatever action required for
 	# failed instruction
+	#
+	# decode instruction at $ea-4
+	# if (instruction is trap)
+	#	handle trap exception
+	# else if (instruction is load or store)
+	#	handle misaligned data address exception
+	# else if (instruction is branch, bret, callr, eret, jmp, or ret)
+	#	handle misaligned destination address exception
+	# else if (instruction is unimplemented)
+	#	handle unimplemented instruction exception
+	# else if (instruction is illegal)
+	#	handle illegal instruction exception
+	# else if (instruction is divide) {
+	#	if (denominator == 0)
+	#		handle division error exception
+	#	else if (instruction is signed divide and numerator == 0x80000000
+	#		and denominator == 0xffffffff)
+	#		handle division error exception
+	#	}
+
 
 	# Exit point for the exception handler
 END_HANDLER:

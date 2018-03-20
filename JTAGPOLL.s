@@ -26,6 +26,7 @@
 # 170222 DFA	Added echo to read character routine.
 ###############################################################################
 
+# Prevent this code from being included twice
 .ifndef	JTAGPOLL_S
 .equ	JTAGPOLL_S, 1
 
@@ -50,21 +51,21 @@
 	.global	PutJTAG
 
 PutJTAG:
-	subi	sp, sp, 8	# subtract 8 from sp, making room for two words
-	stw		r3, 4(sp)	# save contents of r3
-	stw		r4, 0(sp)	# and r4.
-	movia	r3, JTAG_UART_BASE	# r3 points to base of UART device registers
+	subi	sp, sp, 8				# make room for two words
+	stw		r3, 4(sp)				# save contents of r3
+	stw		r4, 0(sp)				# and r4.
+	movia	r3, JTAG_UART_BASE		# r3 points to base of UART registers
 loop2:
 	ldwio	r4, OFFSET_STATUS(r3)	# fetch contents of status register
-	andhi	r4, r4, WSPACE_MASK		# keep only low-order 16 bits
-	beq		r4, r0, loop2			# all 0? Try again
+	andhi	r4, r4, WSPACE_MASK		# keep only high-order 16 bits
+	beq		r4, r0, loop2			# all 0? Ready bit off, so try again
 	# Get here when READY bit turns on
 	stwio	r2, OFFSET_DATA(r3)		# Write character to data register
 eggsit:
 	# our work accomplished; restore register values
-	ldw		r3, 4(sp)
-	ldw		r4, 0(sp)
-	addi	sp, sp, 8	# add 8 to sp, effectively discarding space on stack
+	ldw		r3, 4(sp)				# restore previous r3 value
+	ldw		r4, 0(sp)				# restore previous r4 value
+	addi	sp, sp, 8				# discard space on stack
 	ret					# go back to calling site, all registers preserved
 
 #==============================================================================
@@ -79,9 +80,9 @@ eggsit:
 	.global	GetJTAG
 
 GetJTAG:
-	subi	sp, sp, 8	# two words on stack
-	stw		r3, 4(sp)
-	stw		r4, 0(sp)
+	subi	sp, sp, 8			# two words on stack
+	stw		r3, 4(sp)			# save contents R3
+	stw		r4, 0(sp)			# and R4
 	movia	r3, JTAG_UART_BASE	# point to JTAG base register
 loop3:
 	ldwio	r2, OFFSET_DATA(r3)	# read JTAG data register
