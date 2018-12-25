@@ -139,7 +139,3 @@ One8Seg:
 	stwio	r6, 0(r3)		# light up the leds
 	stw		r6, 0(r5)		# store updated copy of led value
 	br		Restore			# same epilogue
-	
-
-
-
