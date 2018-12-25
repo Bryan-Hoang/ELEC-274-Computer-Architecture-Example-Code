@@ -7,4 +7,4 @@ of the user to determine the correctness and the usefulness of this code.
 Author:  David F. Athersych
 All rights reserved.
 
-See LICENCE.MD for restrictions on the use of this code.
+See [LICENSE.md](./LICENSE.md) for restrictions on the use of this code.
